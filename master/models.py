@@ -13,15 +13,17 @@ class BaseClass(models.Model):
         abstract = True
         
 class Role(BaseClass):
-    doctor_ = 'Doctor'
-    patient_ = 'Patient'
-    
-    choice_ = [(doctor_, 'Doctor'),
-               (patient_, 'Patient'),
-              ]            
-    name = models.CharField(max_length=255, choice = choice_)
-    
-    def __str__(self): 
+    DOCTOR = 'Doctor'
+    PATIENT = 'Patient'
+
+    CHOICES = [
+        (DOCTOR, 'Doctor'),
+        (PATIENT, 'Patient'),
+    ]
+
+    name = models.CharField(max_length=255, choices=CHOICES)
+
+    def __str__(self):
         return f'{self.name}'
     
 class signed_up(BaseClass):
