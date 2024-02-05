@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% block title %}
+    My Appointments
+{% endblock %}
+
+{% block body %}
+
+<style>
+
+table {
+    margin-top: 50px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+}
+
+.h2{
+margin-top: 80px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+
+</style>
+
+
+{% if messages %}
+<div class="message-container">
+    {% for message in messages %}
+        <div class="message {% if message.tags == 'success' %} success{% elif message.tags == 'info' %} info{% elif message.tags == 'warning' %} warning{% elif message.tags == 'error' %} error{% endif %}" role="alert">
+            <div class="message-content">
+                <p>{{ message }}</p>
+            </div>
+            <button class="close-button" onclick="this.parentElement.style.display='none'">&#x2716;</button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+<h2>{{ request.session.title }} {{ request.session.firstname }} {{ request.session.lastname }}</h2>
+<h2>Your Appointments</h2>
+
+{% if request.session.role == "Doctor" %}
+<table>
+    <thead>
+        <tr>
+            <th>Appointment Number</th>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Your Info</th>
+            <th>Return message</th>
+            <th>Status</th>
+            <th>Save</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if appointments %}
+            {% for appointment in appointments %}
+                <tr>
+                    <td>{{ appointment.appointment_number }}</td>
+                    <td>{{ appointment.patient }}</td>
+                    <td>{{ appointment.appointment_date }}</td>
+                    <td>{{ appointment.appointment_time }}</td>
+                    <td>{{ appointment.additional_info }}</td>
+                    <form method="post" action="{% url 'update_appointment_status' appointment.id %}">
+                        {% csrf_token %}
+                        <td><textarea name="return_message" rows="3" cols="30">{{ appointment.return_message }}</textarea></td>
+                        <td>
+                            <select name="approval_status">
+                                <option value="approve" {% if appointment.approval_status %}selected{% endif %}>Approve</option>
+                                <option value="pending" {% if not appointment.approval_status %}selected{% endif %}>Pending</option>
+                            </select>
+                        </td>
+                        <td><button type="submit">Save</button></td>
+                        <td>
+                            <button type="button" onclick="confirmDelete('{{ appointment.id }}')">Delete</button>
+                        </td>
+                    </form>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="9">No Appointments booked</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+
+<script>
+function confirmDelete(appointmentId) {
+    var confirmation = confirm("Are you sure you want to delete this appointment?");
+    if (confirmation) {
+        // If the user confirms, redirect to the delete view or perform the necessary action
+        window.location.href = "{% url 'delete_appointment' appointment_id=0 %}".replace('0', appointmentId);
+    }
+}
+</script>
+
+{% if request.session.role == "Patient" %}
+<table>
+    <thead>
+        <tr>
+            <th>Appointment Number</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Your Info</th>
+            <th>Doctor's message</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if appointments %}
+            {% for appointment in appointments %}
+                <tr>
+                    <td>{{ appointment.appointment_number }}</td>
+                    <td>{{ appointment.doctor }}</td>
+                    <td>{{ appointment.appointment_date }}</td>
+                    <td>{{ appointment.appointment_time }}</td>
+                    <td>{{ appointment.additional_info }}</td>
+                    <td>{{ appointment.return_message }}</td>
+                    <td>{% if appointment.approval_status %}Approved{% else %}Pending{% endif %}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="7">No Appointments booked</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+</div>
+{% endblock %}

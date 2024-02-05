@@ -61,5 +61,32 @@ class signed_up(BaseClass):
 
         super(signed_up, self).save(*args, **kwargs) 
                     
-        
+class Appointment(BaseClass):
+    appointment_number = models.CharField(max_length=255,blank=True)
+    patient = models.CharField(max_length=255, blank=True)
+    patient_email = models.EmailField(max_length=255,blank=True)
+    patient_contact = models.CharField(max_length=255,blank=True)
+    doctor = models.CharField(max_length=255,blank=True)
+    doctor_email = models.EmailField(max_length=255,blank=True)
+    appointment_date = models.DateField(blank=True)
+    appointment_time = models.TimeField(blank=True)
+    additional_info = models.TextField(blank=True)
+    return_message = models.TextField(blank=True)
+    approval_status = models.BooleanField(default=False) 
+
+    def __str__(self):
+        return f"{self.appointment_number} : {self.patient} - {self.doctor} - {self.approval_status}"
+    
+    def save(self, *args, **kwargs):
+        if not self.appointment_number:
+            def generate_rest_APN(digit=10):
+                APN = string.digits
+                number = ""
+                for n in range(digit):
+                    number += random.choice(APN)
+                return number    
+                
+            self.appointment_number += "APN00"+str(generate_rest_APN()) 
+
+        super(Appointment, self).save(*args, **kwargs)        
     

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halthify | OTP verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #3cb4c7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: #19f3f7;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            text-align: center;
+        }
+
+        .message-container {
+            margin-bottom: 16px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            padding: 10px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .bg-green-100 {
+            background-color: #C6F6D5;
+        }
+
+        .bg-blue-100 {
+            background-color: #BFEBF8;
+        }
+
+        .bg-yellow-100 {
+            background-color: #FEEBC8;
+        }
+
+        .bg-red-100 {
+            background-color: #FED7D7;
+        }
+
+        .bg-gray-100 {
+            background-color: #E5E7EB;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #694fee;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 25px;
+
+        }
+
+        button:hover {
+            background-color: #4221fb;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .success-message {
+            color: green;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    {% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+            <div class="message {% if message.tags == 'success' %} success{% elif message.tags == 'info' %} info{% elif message.tags == 'warning' %} warning{% elif message.tags == 'error' %} error{% endif %}" role="alert">
+                <div class="message-content">
+                    <p>{{ message }}</p>
+                </div>
+                <button class="close-button" onclick="this.parentElement.style.display='none'">&#x2716;</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+
+    <h1>Healthify</h1>
+    <h2>OTP Verification</h2>
+    <h5>Please check your {{ email }} for OTP</h5>
+    <form action="{% url 'otp_verification_view' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <input type="hidden" id="email" name="email" value="{{email}}">
+
+        <label for="otp">OTP:</label>
+        <input type="text" id="otp" name="otp" required placeholder="Enter OTP">
+
+        <label for="new_password">Enter New Password:</label>
+        <input type="password" id="new_password" name="new_password" required placeholder="enter new password">
+
+        <label for="confirm_password">Confirm New Password:</label>
+        <input type="password" id="confirm_password" name="confirm_password" required placeholder="confrim new password">
+
+        <button type="submit">Verify</button>
+    </form>
+
+    <form action="{% url 'resend_otp' %}" method="get">
+        {% csrf_token %}
+        <button type="button" onclick="resendOTP()">Resend OTP</button>
+        <input type="hidden" id="email" name="email" value="{{ email }}">
+        <p id="resend-message" class="success-message"></p>
+    </form>
+
+    <script>
+        function resendOTP() {
+            var email = document.getElementById('email').value;
+
+            fetch("{% url 'resend_otp' %}?email=" + email)
+                .then(response => response.json())
+                .then(data => {
+                    var resendMessage = document.getElementById('resend-message');
+
+                    if (data.success) {
+                        resendMessage.textContent = "OTP Resent Successfully";
+                        resendMessage.classList.remove('error-message');
+                        resendMessage.classList.add('success-message');
+                    } else {
+                        resendMessage.textContent = "Failed to Resend OTP: " + data.message;
+                        resendMessage.classList.remove('success-message');
+                        resendMessage.classList.add('error-message');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error resending OTP:", error);
+                });
+        }
+    </script>
+
+<script>
+    // Check if OTP has been sent before
+    var otpSent = sessionStorage.getItem('otpSent') === 'true';
+
+    function resendOTP() {
+        if (!otpSent) {
+            var email = document.getElementById('email').value;
+
+            fetch("{% url 'resend_otp' %}?email=" + email)
+                .then(response => response.json())
+                .then(data => {
+                    var resendMessage = document.getElementById('resend-message');
+
+                    if (data.success) {
+                        resendMessage.textContent = "OTP Resent Successfully";
+                        resendMessage.classList.remove('error-message');
+                        resendMessage.classList.add('success-message');
+
+                        // Mark OTP as sent in session
+                        sessionStorage.setItem('otpSent', 'true');
+                    } else {
+                        resendMessage.textContent = "Failed to Resend OTP: " + data.message;
+                        resendMessage.classList.remove('success-message');
+                        resendMessage.classList.add('error-message');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error resending OTP:", error);
+                });
+        } else {
+            alert("OTP has already been sent. Please wait or check your email.");
+        }
+    }
+</script>
+
+<script>
+    var csrfToken = '{{ csrf_token }}';
+
+    function resendOTP() {
+        var email = document.getElementById('email').value;
+
+        // Include the CSRF token in the request headers
+        fetch("{% url 'resend_otp' %}?email=" + email, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response as needed
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("Error resending OTP:", error);
+        });
+    }
+</script>
+
+
+</div>
+
+</body>
+</html>

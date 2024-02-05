@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}
+    Doctor Appointments
+{% endblock %}
+
+{% block body %}
+
+
+<style>
+  .center-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 70vh; /* Adjust as needed for your layout */
+        margin: 0 auto;
+        max-width: 800px; /* Adjust as needed for your layout */
+        margin-top: 0px;
+    }
+
+
+
+    label {
+        display: block;
+        margin-top: 8px;
+        text-align: left;
+
+    }
+    
+    textarea{
+            width: 100%;
+            max-width: 400px;
+            height: 70px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 16px;
+
+    }
+    
+    input, select {
+        width: 100%;
+        padding: 10px;
+        max-width: 200px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    p {
+    margin-bottom: 15px;
+    }
+</style>
+
+<div class="center-content">
+
+    {% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+            <div class="message {% if message.tags == 'success' %} success{% elif message.tags == 'info' %} info{% elif message.tags == 'warning' %} warning{% elif message.tags == 'error' %} error{% endif %}" role="alert">
+                <div class="message-content">
+                    <p>{{ message }}</p>
+                </div>
+                <button class="close-button" onclick="this.parentElement.style.display='none'">&#x2716;</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+
+<form method="post" action="{% url 'book_appointment_view' doctor_id=doctor.id %}">
+    {% csrf_token %}
+
+    <h2>Book an Appointment with {{ doctor.title }} {{ doctor.firstname }} {{ doctor.lastname }}</h2>
+
+    <!-- <label for="patient_name">Your Name:</label> -->
+    <input type="hidden" id="patient_name" name="patient_name" required value="{{ request.session.title }} {{ request.session.firstname }} {{ request.session.lastname }}">
+
+    <!-- <label for="patient_email">Your Email:</label> -->
+    <input type="hidden" id="patient_email" name="patient_email" required value="{{ request.session.email }}">
+
+    <!-- <label for="patient_contact">Your Contact Number:</label> -->
+    <input type="hidden" id="patient_contact" name="patient_contact" required value="{{ request.session.contact }}">
+
+    <!-- <label for="doctor_name">Doctor's Name:</label> -->
+    <input type="hidden" id="doctor_name" name="doctor_name" required value="{{ doctor.title }} {{ doctor.firstname }} {{ doctor.lastname }}">
+
+    <!-- <label for="doctor_email">Doctor's Email:</label> -->
+    <input type="hidden" id="doctor_email" name="doctor_email" required value="{{ doctor.email }}">
+
+    <label for="appointment_date">Select Appointment Date:</label>
+    <input type="date" id="appointment_date" name="appointment_date" required>
+
+    <label for="appointment_time">Select Appointment Time:</label>
+    <input type="time" id="appointment_time" name="appointment_time" required>
+
+    <label for="additional_info">Additional Information or Message:</label>
+    <textarea id="additional_info" name="additional_info" rows="4" cols="50"></textarea>
+<br>
+    <button type="submit">Book Appointment</button>
+</form>
+</div>
+{% endblock %}

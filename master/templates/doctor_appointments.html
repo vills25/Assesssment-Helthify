@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}
+    Doctor Appointments
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+                <div class="message {% if message.tags == 'success' %} success{% elif message.tags == 'info' %} info{% elif message.tags == 'warning' %} warning{% elif message.tags == 'error' %} error{% endif %}" role="alert">
+                    <div class="message-content">
+                        <p>{{ message }}</p>
+                    </div>
+                    <button class="close-button" onclick="this.parentElement.style.display='none'">&#x2716;</button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+
+        <h2>{{ request.user.get_full_name }} - Doctor</h2>
+        <h2>Your Appointments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Appointment Number</th>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Patient Info</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if doctor_appointments %}
+                    {% for appointment in doctor_appointments %}
+                        <tr>
+                            <td>{{ appointment.appointment_number }}</td>
+                            <td>{{ appointment.patient.get_full_name }}</td>
+                            <td>{{ appointment.appointment_date }}</td>
+                            <td>{{ appointment.appointment_time }}</td>
+                            <td>{{ appointment.additional_info }}</td>
+                            <td>{% if appointment.approval_status %}Approved{% else %}Pending{% endif %}</td>
+                            <td>
+                                <form method="post" action="{% url 'update_appointment_status' appointment.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit">{% if appointment.approval_status %}Set Pending{% else %}Approve{% endif %}</button>
+                                </form>
+                                <textarea name="return_message" placeholder="Write return message to patient..."></textarea>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7">No pending appointments</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

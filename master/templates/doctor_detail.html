@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}
+doctor details
+{% endblock %}
+
+{% block body %}
+
+<style>
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 800px;
+  max-height: 1200px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+}
+
+.title {
+  color: grey;
+  font-size: 18px;
+}
+
+button {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+a {
+  text-decoration: none;
+  font-size: 22px;
+  color: black;
+}
+
+button:hover, a:hover {
+  opacity: 0.7;
+}
+</style>
+
+{% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+            <div class="message {% if message.tags == 'success' %} success{% elif message.tags == 'info' %} info{% elif message.tags == 'warning' %} warning{% elif message.tags == 'error' %} error{% endif %}" role="alert">
+                <div class="message-content">
+                    <p>{{ message }}</p>
+                </div>
+                <button class="close-button" onclick="this.parentElement.style.display='none'">&#x2716;</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+<h2 style="text-align:center">User Profile Card</h2>
+
+<div class="card">
+  <h1>{{ doctor.title }} {{ doctor.firstname }} {{ doctor.lastname }}</h1>
+  <p class="title">Degree: {{ doctor.degree }}</p>
+  <h4>Contact: {{ doctor.contact }}</h4>
+  <h4>Email: {{ doctor.email }}</h4>
+  <h4>Address: {{ doctor.address }}</h4>
+  <h4>Summary: {{ doctor.summary }}</h4>  <div style="margin: 24px 0;">
+    <a href="#"><i class="fa fa-dribbble"></i></a> 
+    <a href="#"><i class="fa fa-twitter"></i></a>  
+    <a href="#"><i class="fa fa-linkedin"></i></a>  
+    <a href="#"><i class="fa fa-facebook"></i></a> 
+  </div>
+
+
+  {% if request.session.role == "Patient" %}
+
+  <div>
+    <p><a href="{% url 'book_appointment_view' doctor_id=doctor.id %}"><button>Book Appointment</button></a></p>
+
+</div>
+
+   {% endif %}
+</div>
+<p><a href="{% url 'all_doctors_view' %}">Back</a></p>
+</div>
+{% endblock %}

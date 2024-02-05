@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}
+Home
+{% endblock %}
+
+{% block body %}
+
+<style>
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 800px;
+  max-height: 1200px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+}
+
+.title {
+  color: grey;
+  font-size: 18px;
+}
+
+button {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+a {
+  text-decoration: none;
+  font-size: 22px;
+  color: black;
+}
+
+button:hover, a:hover {
+  opacity: 0.7;
+}
+</style>
+
+{% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+            <div class="message {% if message.tags == 'success' %} success{% elif message.tags == 'info' %} info{% elif message.tags == 'warning' %} warning{% elif message.tags == 'error' %} error{% endif %}" role="alert">
+                <div class="message-content">
+                    <p>{{ message }}</p>
+                </div>
+                <button class="close-button" onclick="this.parentElement.style.display='none'">&#x2716;</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+<h1>Welcome to Healthify</h1>
+        
+
+
+<h1>Welcome to Healthify: Empowering Your Wellness Journey</h1>
+
+<p>
+  Welcome to Healthify, your all-in-one platform dedicated to enhancing your health and well-being. We believe that a healthy lifestyle is a journey, and we're here to support you every step of the way.
+</p>
+
+
+{% if request.session.role == "Doctor" %}
+<br>
+<strong>User Instruction:</strong>
+    <p>Click on "View Other Doctors" in sidebar to see all other doctors associated with Healthify (excluding you).</p>
+    <p>Click on "View Appointments" in sidebar to view all appointments of your patients and update their status.</p>
+    <p>Click on "Save Button" in "View Appointments" to update a message and the Approval Status for the Patient.</p>
+{% endif %}
+
+{% if request.session.role == "Patient" %}
+<br>
+<strong>User Instruction:</strong>
+    <p>         Click on "View All Doctors" in sidebar to see all doctors associated with Healthify and book an appointment.</p>
+    <p>         Click on "View Details" in All Doctors page to see the details of that doctor.</p>
+    <p>         Click on "Book Appointments" in Doctor's Details page to book an appointment with that doctor.</p>
+    <p>         Click on "Veiw Appointments Status" in sidebar to see the status of your booked appointments.</p>
+    {% endif %}
+
+
+<h2>Key Features:</h2>
+
+<ul>
+  <li>
+    <strong>Personalized Health Plans:</strong> Tailored recommendations based on your individual health goals, preferences, and medical history. Our platform provides personalized nutrition plans, fitness routines, and lifestyle tips to help you achieve optimal well-being.
+  </li>
+  <li>
+    <strong>Comprehensive Health Tracking:</strong> Easily monitor and track your progress. Log your meals, workouts, sleep patterns, and more. Our intuitive dashboard provides insights into your health journey, empowering you to make informed decisions.
+  </li>
+  <li>
+    <strong>Connect with Experts:</strong> Access a network of certified health professionals, including nutritionists, fitness trainers, and mental health experts. Schedule virtual consultations, ask questions, and receive expert guidance to ensure you're on the right path.
+  </li>
+  <li>
+    <strong>Community Support:</strong> Join a vibrant community of like-minded individuals. Share your experiences, challenges, and successes. Connect with others who are pursuing similar health goals and build a supportive network.
+  </li>
+  <li>
+    <strong>Healthify Challenges:</strong> Engage in fun and motivating challenges to keep your wellness journey exciting. Whether it's a fitness challenge, mindful eating challenge, or sleep improvement challenge, we provide a variety of activities to keep you motivated.
+  </li>
+  <br>  
+  <p>coming soon...</p>
+  <li>
+    <strong>Educational Resources:</strong> Stay informed with our extensive library of articles, videos, and resources covering a wide range of health topics. We believe that knowledge is key to making sustainable lifestyle changes.
+  </li>
+</ul>
+
+<h2>Why Choose Healthify?</h2>
+
+<ul>
+  <li>
+    <strong>Holistic Approach:</strong> We prioritize your overall well-being, addressing physical, mental, and emotional aspects of health.
+  </li>
+  <li>
+    <strong>User-Friendly Interface:</strong> Our platform is designed with simplicity in mind, ensuring a seamless and enjoyable user experience.
+  </li>
+  <li>
+    <strong>Privacy and Security:</strong> We take your privacy seriously. Your data is encrypted and secured, providing a safe environment for your health information.
+  </li>
+</ul>
+
+<p>
+  Embark on your health journey with Healthify today and take control of your well-being. Start living your healthiest, happiest life!
+</p>
+</div>
+{% endblock %}
