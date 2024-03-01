@@ -50,89 +50,55 @@ def signup_view(request):
 
 def login_view(request):
     if request.method == 'POST':
-        email_ = request.POST['email']
-        password_ = request.POST['password']
+        email = request.POST.get('email')
+        password = request.POST.get('password')
         
         try:
-            get_active_accounts = signed_up.objects.get(email=email_)
-
-            if get_active_accounts.role.name == "Doctor":
-                try:
-                    get_active_accounts = signed_up.objects.get(email=email_)
-
-                except signed_up.DoesNotExist:
-                    messages.info(request, 'Invalid staff_id or password')
-                    return redirect('login_view')
-                else:
-                    print(get_active_accounts.is_activated_doctor)
-                    if get_active_accounts.is_activated_doctor == True:
-                        if password_ == get_active_accounts.password:
-                            request.session['email'] = email_
-                            request.session['title'] = get_active_accounts.title
-                            request.session['id'] = get_active_accounts.id
-                            request.session['role'] = get_active_accounts.role.name
-                            request.session['firstname'] = get_active_accounts.firstname
-                            request.session['lastname'] = get_active_accounts.lastname
-                            request.session['gender'] = get_active_accounts.gender
-                            request.session['degree'] = get_active_accounts.degree
-                            request.session['contact'] = get_active_accounts.contact
-                            request.session['address'] = get_active_accounts.address
-                            request.session['summary'] = get_active_accounts.summary
-                            request.session['is_activated_doctor'] = get_active_accounts.is_activated_doctor
-
-                            if get_active_accounts.role.name == "Doctor":
-                                messages.success(request, f"hello! {get_active_accounts.title} {get_active_accounts.firstname} {get_active_accounts.lastname}...logged in Successfull")
-                                return redirect('home_view')
-                            elif get_active_accounts.role.name == "Patient" :
-                                messages.success(request, f"hello! {get_active_accounts.title} {get_active_accounts.firstname} {get_active_accounts.lastname}...logged in Successfull")
-                                return redirect('home_view')
-                        else:
-                            messages.info(request, 'Invalid staff_id or password')
-                            return redirect('login_view')
+            user = signed_up.objects.get(email=email)
+            if user.role.name in ["Doctor", "Patient"]:
+                if password == user.password:
+                    if user.role.name == "Doctor" and user.is_activated_doctor:
+                        request.session.update({
+                            'email': user.email,
+                            'title': user.title,
+                            'id': user.id,
+                            'role': user.role.name,
+                            'firstname': user.firstname,
+                            'lastname': user.lastname,
+                            'gender': user.gender,
+                            'degree': user.degree,
+                            'contact': user.contact,
+                            'address': user.address,
+                            'summary': user.summary,
+                            'is_activated_doctor': user.is_activated_doctor,
+                        })
+                        messages.success(request, f"Hello! {user.title} {user.firstname} {user.lastname}...logged in successfully")
+                        return redirect('home_view')
+                    elif user.role.name == "Patient" and user.is_activated_patient:
+                        request.session.update({
+                            'email': user.email,
+                            'title': user.title,
+                            'id': user.id,
+                            'role': user.role.name,
+                            'firstname': user.firstname,
+                            'lastname': user.lastname,
+                            'gender': user.gender,
+                            'degree': user.degree,
+                            'contact': user.contact,
+                            'address': user.address,
+                            'summary': user.summary,
+                            'is_activated_patient': user.is_activated_patient,
+                        })
+                        messages.success(request, f"Hello! {user.title} {user.firstname} {user.lastname}...logged in successfully")
+                        return redirect('home_view')
                     else:
-                        messages.info(request, 'Your account is deactivated. Please contact to Admin for activate.')
-                        return redirect('login_view')
-
-            if get_active_accounts.role.name == "Patient":
-                try:
-                    get_active_accounts = signed_up.objects.get(email=email_)
-
-                except signed_up.DoesNotExist:
-                    messages.info(request, 'Invalid staff_id or password')
-                    return redirect('login_view')
+                        messages.info(request, 'Your account is deactivated. Please contact Admin for activation.')
                 else:
-                    print(get_active_accounts.is_activated_patient)
-                    if get_active_accounts.is_activated_patient == True:
-                        if password_ == get_active_accounts.password:
-                            request.session['email'] = email_
-                            request.session['title'] = get_active_accounts.title
-                            request.session['id'] = get_active_accounts.id
-                            request.session['role'] = get_active_accounts.role.name
-                            request.session['firstname'] = get_active_accounts.firstname
-                            request.session['lastname'] = get_active_accounts.lastname
-                            request.session['gender'] = get_active_accounts.gender
-                            request.session['degree'] = get_active_accounts.degree
-                            request.session['contact'] = get_active_accounts.contact
-                            request.session['address'] = get_active_accounts.address
-                            request.session['summary'] = get_active_accounts.summary
-                            request.session['is_activated_patient'] = get_active_accounts.is_activated_patient
-
-                            if get_active_accounts.role.name == "Doctor":
-                                messages.success(request, f"hello! {get_active_accounts.title} {get_active_accounts.firstname} {get_active_accounts.lastname}...logged in Successfull")
-                                return redirect('home_view')
-                            elif get_active_accounts.role.name == "Patient" :
-                                messages.success(request, f"hello! {get_active_accounts.title} {get_active_accounts.firstname} {get_active_accounts.lastname}...logged in Successfull")
-                                return redirect('home_view')
-                        else:
-                            messages.info(request, 'Invalid staff_id or password')
-                            return redirect('login_view')
-                    else:
-                        messages.info(request, 'Your account is deactivated. Please contact to Admin for activate.')
-                        return redirect('login_view')
-
+                    messages.info(request, 'Invalid email or password')
+            else:
+                messages.info(request, 'Invalid role')
         except signed_up.DoesNotExist:
-            messages.info(request, 'Invalid staff_id or password')
-            return redirect('login_view')
+            messages.info(request, 'Invalid email or password')
 
     return render(request, 'login.html')
 
@@ -160,31 +126,26 @@ def forget_password_view(request):
 
 def otp_verification_view(request):
     if request.method == 'POST':
-        email_ = request.POST['email'].lower()
-        otp_ = request.POST['otp']
-        new_password_ = request.POST['new_password']
-        confirm_password_ = request.POST['confirm_password']
+        email = request.POST.get('email', '').lower()
+        otp = request.POST.get('otp', '')
+        new_password = request.POST.get('new_password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+
         try:
-            check_user = signed_up.objects.get(email=email_)
+            user = signed_up.objects.get(email=email)
         except signed_up.DoesNotExist:
             messages.info(request, "User doesn't exist")
             return redirect('login_view')
+
+        if user.otp != otp:
+            messages.error(request, "Invalid OTP!!!")
+        elif new_password != confirm_password:
+            messages.info(request, "New password and confirm password don't match!!")
         else:
-            if check_user:
-                if check_user.otp == otp_:
-                    if new_password_ == confirm_password_:
-                        check_user.password = new_password_
-                        check_user.save()
-                        messages.success(request, "Password Changed Successfully")
-                        return redirect('login_view')
-                    else:
-                        messages.info(request, "New password and confirm password doesn't match!!")
-                        context = {'email': email_}
-                        return render(request, 'otp_verification.html', context)
-                else:
-                    messages.error(request, "Invalid OTP!!!")
-                    context = {'email': email_}
-                    return render(request, 'otp_verification.html', context)
+            user.password = new_password
+            user.save()
+            messages.success(request, "Password Changed Successfully")
+            return redirect('login_view')
 
     return render(request, 'otp_verification.html')
 
@@ -245,7 +206,6 @@ def update_profile_view(request):
         messages.success(request, "Profile updated successfully.")
         return redirect('home_view')
 
-
     return render(request, 'update_profile.html')
 
 @is_authenticated
@@ -282,21 +242,19 @@ def book_appointment_view(request, doctor_id):
     doctor = get_object_or_404(signed_up, id=doctor_id)
 
     if request.method == 'POST':
-        patient_name = request.POST.get('patient_name')
-        patient_email = request.POST.get('patient_email')
-        patient_contact = request.POST.get('patient_contact')
-        doctor_name = request.POST.get('doctor_name')
-        doctor_email = request.POST.get('doctor_email')
-        appointment_date = request.POST.get('appointment_date')
-        appointment_time = request.POST.get('appointment_time')
-        additional_info = request.POST.get('additional_info')
+        patient_name = request.POST.get('patient_name', '')
+        patient_email = request.POST.get('patient_email', '')
+        patient_contact = request.POST.get('patient_contact', '')
+        appointment_date = request.POST.get('appointment_date', '')
+        appointment_time = request.POST.get('appointment_time', '')
+        additional_info = request.POST.get('additional_info', '')
 
-        appointment = Appointment.objects.create(   
-            patient=patient_name,
+        appointment = Appointment.objects.create(    
+            patient=patient_name,   
             patient_email=patient_email,
             patient_contact=patient_contact,
-            doctor=doctor_name,
-            doctor_email=doctor_email,
+            doctor=doctor.firstname + ' ' + doctor.lastname,
+            doctor_email=doctor.email,
             appointment_date=appointment_date,
             appointment_time=appointment_time,
             additional_info=additional_info
@@ -304,7 +262,7 @@ def book_appointment_view(request, doctor_id):
         messages.success(request, f"Appointment requested with Dr. {doctor.firstname} {doctor.lastname} on {appointment_date} at {appointment_time}")
         return redirect('my_appointments')
 
-    return render(request, 'book_appointment.html', {'doctor': doctor})
+    return render(request, 'book_appointment.html', {'doctor': doctor}) 
 
 @is_authenticated
 def delete_appointment(appointment_id):
@@ -326,6 +284,7 @@ def my_appointments(request):
         user_email = request.session.get('email')
         appointments = Appointment.objects.filter(patient_email=user_email)
         return render(request, 'view_appointments.html', {'appointments': appointments})
+    
     if request.session.get('role') == "Doctor":
         user_email = request.session.get('email')
         appointments = Appointment.objects.filter(doctor_email=user_email)
@@ -334,9 +293,9 @@ def my_appointments(request):
 @is_authenticated
 def update_appointment_status(request, appointment_id):
     if request.method == 'POST':
-        try:
-            appointment = Appointment.objects.get(id=appointment_id)
+        appointment = Appointment.objects.filter(id=appointment_id).first()
 
+        if appointment is not None:
             approval_status = request.POST.get('approval_status')
             if approval_status == 'approve':
                 appointment.approval_status = True
@@ -347,12 +306,12 @@ def update_appointment_status(request, appointment_id):
             appointment.return_message = return_message
             appointment.save()
             messages.success(request, "Appointment status and return message updated successfully.")
-            return redirect('my_appointments')
-        except Exception as e:
-            messages.error(request, f"Something went wrong: {str(e)}")
-            return redirect('home_view')
+        else:
+            messages.error(request, "Appointment not found.")
     else:
-        return redirect('home_view')
+        messages.error(request, "Invalid request method.")
+
+    return redirect('my_appointments')
 
 def logout(request):
     request.session.clear()
