@@ -1,166 +1,193 @@
 {% load static %}
-    
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Halthify | Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      crossorigin="anonymous"
+    />
 
     <style>
-body {
-    font-family: Arial, sans-serif;
-    background-image: url("{% static '\images\loginpage.jpg' %}");
-    background-size: cover;  /* This makes the background image cover the entire screen */
-    background-position: center;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+      body {
+        font-family: Arial, sans-serif;
+        background-image: url("{% static '\images\loginpage.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .login-container {
+        background-color: #1e242433;
+        padding: 20px;
+        border-radius: 29px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 600px;
+        text-align: center;
+      }
 
+      h1 {
+        position: absolute;
+        top: 0;
+        left: awesome/6.5.1/css/all.min.css0px;
+        margin: 30px;
+        color: black;
+        font-size: 50px;
+      }
 
+      .message-container {
+        margin-bottom: 16px;
+      }
 
-        .login-container {
-            background-color: #1e242433;
-            padding: 20px;
-            border-radius: 29px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 600px;
-            text-align: center;
-        }
+      .message {
+        margin-bottom: 16px;
+        padding: 10px;
+        border-radius: 4px;
+        position: relative;
+      }
 
-        h1 {
-            position: absolute;
-            top: 0;
-            left: 0;
-            margin: 30px;
-            color: white;
-            font-size: 50px;
-            text-shadow: 2px 2px 2px #000; 
-        }
+      .bg-green-100 {
+        background-color: #c6f6d5;
+      }
 
-        .message-container {
-            margin-bottom: 16px;
-        }
+      .bg-blue-100 {
+        background-color: #bfebf8;
+      }
 
-        .message {
-            margin-bottom: 16px;
-            padding: 10px;
-            border-radius: 4px;
-            position: relative;
-        }
+      .bg-yellow-100 {
+        background-color: #feebc8;
+      }
 
-        .bg-green-100 {
-            background-color: #C6F6D5;
-        }
+      .bg-red-100 {
+        background-color: #fed7d7;
+      }
 
-        .bg-blue-100 {
-            background-color: #BFEBF8;
-        }
+      .bg-gray-100 {
+        background-color: #e5e7eb;
+      }
 
-        .bg-yellow-100 {
-            background-color: #FEEBC8;
-        }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        text-align: left;
+      }
 
-        .bg-red-100 {
-            background-color: #FED7D7;
-        }
+      input {
+        width: 100%;
+        background-color: #aaf3f333;
+        padding: 10px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+        border: 1px solid #787272a6;
+        border-radius: 50px;
+      }
 
-        .bg-gray-100 {
-            background-color: #E5E7EB;
-        }
+      button {
+        background-color: #3ff4fe;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            text-align: left;
-        }
+      button:hover {
+        background-color: #4221fb;
+      }
 
-        input {
-            width: 100%;
-            background-color: #aaf3f333;
-            padding: 10px;
-            margin-bottom: 16px;
-            box-sizing: border-box;
-            border: 1px solid #787272a6;
-            border-radius: 4px;
-        }
-
-        button {
-            background-color: #3ff4fe;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #4221fb;
-        }
-
-        .close-button {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #555;
-        }
-       .i {
-    font-size: 24px;
-    color: red;
-}
-
+      .close-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #555;
+      }
+      .i {
+        font-size: 24px;
+        color: red;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <h1>Healthify</h1>
 
-
-    
-<h1>Healthify</h1>
-
-
-<div class="login-container">
-    {% if messages %}
-    <div class="message-container">
+    <div class="login-container">
+      {% if messages %}
+      <div class="message-container">
         {% for message in messages %}
-            <div class="message {% if message.tags == 'success' %} success{% elif message.tags == 'info' %} info{% elif message.tags == 'warning' %} warning{% elif message.tags == 'error' %} error{% endif %}" role="alert">
-                <div class="message-content">
-                    <p>{{ message }}</p>
-                </div>
-                <button class="close-button" onclick="this.parentElement.style.display='none'">&#x2716;</button>
-            </div>
+        <div
+          class="message {% if message.tags == 'success' %} success{% elif message.tags == 'info' %} info{% elif message.tags == 'warning' %} warning{% elif message.tags == 'error' %} error{% endif %}"
+          role="alert"
+        >
+          <div class="message-content">
+            <p>{{ message }}</p>
+          </div>
+          <button
+            class="close-button"
+            onclick="this.parentElement.style.display='none'"
+          >
+            &#x2716;
+          </button>
+        </div>
         {% endfor %}
-    </div>
-{% endif %}
+      </div>
+      {% endif %}
 
-<div>
-    <a href="#"><i class="fa fa-heartbeat fa-3x" style="color: rgb(246, 246, 246);"></i></a>
-    <h2>Login</h2>
-</div>
+      <div>
+        <a href="#"
+          ><i
+            class="fa fa-heartbeat fa-3x"
+            style="color: rgb(246, 246, 246)"
+          ></i
+        ></a>
+        <h2>Login</h2>
+      </div>
 
-
-    <form action="{% url 'login_view' %}" method="post" enctype="multipart/form-data">
+      <form
+        action="{% url 'login_view' %}"
+        method="post"
+        enctype="multipart/form-data"
+      >
         {% csrf_token %}
         <label for="email">email:</label>
-        <input type="text" id="email" name="email" required placeholder="example@xyz.com">
+        <input
+          type="text"
+          id="email"
+          name="email"
+          required
+          placeholder="example@xyz.com"
+        />
 
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required placeholder="********">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          placeholder="********"
+        />
 
         <button type="submit">Login</button>
-    </form>
+      </form>
 
-    <p>I don't have an account... <a href="{% url 'signup_view' %}">signup</a></p>
-    <p>I forget my password... <a href="{% url 'forget_password_view' %}">reset</a></p>
-</div>
-
-</body>
+      <p>
+        I don't have an account... <a href="{% url 'signup_view' %}">signup</a>
+      </p>
+      <p>
+        I forget my password...
+        <a href="{% url 'forget_password_view' %}">reset</a>
+      </p>
+    </div>
+  </body>
 </html>

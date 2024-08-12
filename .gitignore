@@ -158,3 +158,6 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-&y9&_1k3dd_6cl(fh3%fij%(!40*_23(x7jmi(50$vq!ml)(y('
